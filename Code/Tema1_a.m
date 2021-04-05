@@ -1,9 +1,5 @@
 
-imageInputs = readyImages();
-%imageTargets = 
-
-
-
+[imageInputs,imageTargets] = readyImages('Datasets greek/train_letters_images');
 
 
 net = feedforwardnet();
