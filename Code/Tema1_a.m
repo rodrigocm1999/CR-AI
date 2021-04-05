@@ -1,43 +1,46 @@
+clear all;
 
-[imageInputs,imageTargets] = readyImages('Datasets greek/train_letters_images');
+
+[imageInputs,imageTargets] = readyImages('Datasets greek/train_high_resolution',12);
 
 
-net = feedforwardnet();
+net = feedforwardnet([ 200 ]);
 
 %net.trainFcn = 'traingd';
 %net.trainFcn = 'trainbfg';
-net.trainParam.epochs = 500;
+net.trainParam.epochs = 1;
 
-net.layers{1}.transferFcn = 'logsig';
-net.layers{2}.transferFcn = 'purelin';
+%net.layers{1}.transferFcn = 'logsig';
+%net.layers{2}.transferFcn = 'purelin';
 %net.layers{1}.transferFcn = 'tansig';
 %net.layers{2}.transferFcn = 'logsig';
 
+% TODOS OS EXEMPLOS DE INPUT SAO USADOS NO TREINO % de usar treino atcho eu
+net.divideFcn = '';
 
 
 % TREINAR
-[net,tr] = train(net, imageInputs, imageTargets);
+[net,trainResult] = train(net, imageInputs, imageTargets);
 %view(net);
-%disp(tr)
+disp(trainResult)
 % SIMULAR
 output = sim(net, imageInputs);
 
-
 %VISUALIZAR DESEMPENHO
-%plotconfusion(irisTargets, out) % Matriz de confusao
-%plotperf(tr)         % Grafico com o desempenho da rede nos 3 conjuntos  
+plotconfusion(imageTargets, output) % Matriz de confusao
+%plotperf(trainResult)         % Grafico com o desempenho da rede nos 3 conjuntos  
 
-accuracy = testNetworkAccuracy(output,imageTargets,tr.testIndex);
+accuracy = testNetworkAccuracy(output,imageTargets,size(trainResult.trainInd,2));
 fprintf('Precisao total %f\n', accuracy)
 
 
 % SIMULAR A REDE APENAS NO CONJUNTO DE TESTE
-TInput = imageInputs(:, tr.testInd);
-TTargets = imageTargets(:, tr.testInd);
+testInput = imageInputs(:, trainResult.testInd);
+testTargets = imageTargets(:, trainResult.testInd);
 
-testGroupOutput = sim(net, TInput);
+testGroupOutput = sim(net, testInput);
 
-accuracy = testNetworkAccuracy(testGroupOutput,TTargets,tr.testIndex);
+accuracy = testNetworkAccuracy(testGroupOutput,testTargets,size(trainResult.testInd,2));
 fprintf('Precisao teste %f\n', accuracy)
 
 
