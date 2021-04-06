@@ -2,6 +2,7 @@ function [imageInputs,imageTargets] = readyImages(imagesPath,imgResolution,fileN
 %READYIMAGES
 % Esta função pega nas imagens de treino e converte para matrizes para
 % poderem ser usadas na rede neuronal
+amountImageTypes = 10;
 
 
 % Preparar a lista das imagens a abrir
@@ -44,7 +45,6 @@ end
 
 % Sort End ----------------------------------------------------------------
 
-amountImageTypes = 24;
 amountOfEachType = amountImgs / amountImageTypes;
 
 imageInputs = zeros(imgResolution * imgResolution , amountImgs);
