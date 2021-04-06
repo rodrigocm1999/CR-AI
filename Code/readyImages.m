@@ -1,11 +1,48 @@
-function [imageInputs,imageTargets] = readyImages(imagesPath,imgResolution)
+function [imageInputs,imageTargets] = readyImages(imagesPath,imgResolution,fileNumberFilter, flag)
 %READYIMAGES
 % Esta função pega nas imagens de treino e converte para matrizes para
 % poderem ser usadas na rede neuronal
 
+
+% Preparar a lista das imagens a abrir
 files = dir(imagesPath); % TODO fix da shit 2 primeiros elementos são saltados
 
-amountImgs = length(files) - 2; %- 200;
+%Sort the files by their real order ---------------------------------------
+fileNames = strings(1,length(files));
+
+for i=1:length(files)
+    fileNames(i) =  files(i).name;
+end
+
+amountImgs = length(files) - 2; % - 200;
+
+filesWithoutDots = strings(1,amountImgs);
+filenum = zeros(1,amountImgs);
+
+for i=3:length(files)
+    str = fileNames(i);
+    
+    filenum(i - 2) = sscanf(str, fileNumberFilter);
+    filesWithoutDots(i - 2) = str; 
+end
+
+[~,sortedIndexes] = sort(filenum);
+almostReadyPaths = filesWithoutDots(sortedIndexes);
+
+pathPrePart = strcat(imagesPath, '\');
+
+readyPaths = strings(1,amountImgs);
+
+for i=1:amountImgs
+    readyPaths(i) = strcat(pathPrePart, almostReadyPaths(i));
+end
+
+if(flag == 2)
+    readyPaths = fliplr(readyPaths);
+    % garantir que a inversão está certa
+end
+
+% Sort End ----------------------------------------------------------------
 
 amountImageTypes = 24;
 amountOfEachType = amountImgs / amountImageTypes;
@@ -15,15 +52,14 @@ imageTargets = zeros(amountImageTypes, amountImgs);
 
 counter = 0;
 
-for i=3:amountImgs + 2
+for i=1:amountImgs
     
-    filePath = strcat(files(i).folder , strcat('\',files(i).name))
-    image = imread(filePath);
+    image = imread(readyPaths(i));
     image = imresize(image, [imgResolution imgResolution]);
     
-    imageInputs(:,i - 2) = image(:);
+    imageInputs(:,i) = image(:);
     supposedLetter = fix(counter / amountOfEachType) + 1;
-    imageTargets(supposedLetter , i - 2) = 1;
+    imageTargets(supposedLetter , i) = 1;
     
     counter = counter + 1;
     
