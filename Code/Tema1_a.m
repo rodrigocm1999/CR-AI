@@ -1,14 +1,12 @@
 clear all;
 
+[imageInputs,imageTargets] = readyImages('Datasets greek/train_high_resolution', 8);
 
-[imageInputs,imageTargets] = readyImages('Datasets greek/train_high_resolution',12);
-
-
-net = feedforwardnet([ 200 ]);
+net = feedforwardnet([ 10 ]);
 
 %net.trainFcn = 'traingd';
 %net.trainFcn = 'trainbfg';
-net.trainParam.epochs = 1;
+net.trainParam.epochs = 100;
 
 %net.layers{1}.transferFcn = 'logsig';
 %net.layers{2}.transferFcn = 'purelin';
@@ -16,7 +14,7 @@ net.trainParam.epochs = 1;
 %net.layers{2}.transferFcn = 'logsig';
 
 % TODOS OS EXEMPLOS DE INPUT SAO USADOS NO TREINO % de usar treino atcho eu
-net.divideFcn = '';
+%net.divideFcn = '';
 
 
 % TREINAR
