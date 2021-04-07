@@ -1,8 +1,8 @@
 clear all;
 
-imgsResolution = 11;
+imgsResolution = 16;
 
-[imageInputs,imageTargets] = readyImages('Datasets/Folder2', imgsResolution, '%d.jpg', 2);
+[imageInputs,imageTargets] = readyImages('Datasets/Folder3', imgsResolution, 'letter_bnw_test_%d.jpg', 1);
 
 net = feedforwardnet([ 10 ]);
 
@@ -37,7 +37,7 @@ fprintf('Precisao total %f\n', accuracy)
 %testInput = imageInputs(:, trainResult.testInd);
 %testTargets = imageTargets(:, trainResult.testInd);
 
-[testInput,testTargets] = readyImages('Datasets/Folder2', imgsResolution, 'letter_bnw_test_%d.jpg', 1);
+[testInput,testTargets] = readyImages('Datasets/Folder3', imgsResolution, 'letter_bnw_test_%d.jpg', 2);
 
 testOutput = sim(net, testInput);
 

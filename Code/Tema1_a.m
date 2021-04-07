@@ -5,7 +5,7 @@ imgsResolution = 16;
 
 net = feedforwardnet([ 10 ]);
 
-net.trainParam.epochs = 50;
+net.trainParam.epochs = 15;
 % Usar todas as imagens para treinar
 net.divideFcn = '';
 
@@ -16,7 +16,6 @@ disp(trainResult)
 output = sim(net, imageInputs);
 
 plotconfusion(imageTargets, output) % Matriz de confusao
-plotperf(trainResult)               % Grafico com o desempenho da rede
 
 numberOfElements = size(trainResult.trainInd,2);
 accuracy = testNetworkAccuracy(output,imageTargets,numberOfElements);
