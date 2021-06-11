@@ -26,8 +26,12 @@ disp(trainResult)
 output = sim(net, imageInputs);
 plotconfusion(imageTargets, output) % Matriz de confusao
 
-accuracy = testNetworkAccuracy(output,imageTargets,size(trainResult.trainInd,2));
-fprintf('Precisao total %f\n', accuracy)
+accuracy = testNetworkAccuracy(output,imageTargets);
+fprintf('Precisao total -> %f\n', accuracy)
+
+accuracy = testNetworkAccuracy(output,imageTargets,trainResult.testInd);
+fprintf('Precisao teste -> %f\n', accuracy)
+
 
 %TODO save neural network- maybe name it the timestamp
 
