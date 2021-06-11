@@ -2,7 +2,7 @@ clear all;
 
 imgsResolution = 16;
 
-[imageInputs,imageTargets] = readyImages('Datasets/Folder3', imgsResolution, 'letter_bnw_test_%d.jpg', 1);
+[imageInputs,imageTargets] = readyImages('Folder3', imgsResolution, 'letter_bnw_test_%d','jpg', 1);
 
 net = feedforwardnet([ 10 ]);
 

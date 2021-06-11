@@ -1,21 +1,27 @@
-function [imageInputs,imageTargets] = readyImages(imagesPath,imgResolution,fileNumberFilter, flag)
+function [imageInputs,imageTargets] = readyImages(folderName,imgResolution,fileNumberFilter,fileExtension, flag)
 %READYIMAGES
 % Esta função pega nas imagens de treino e converte para matrizes para
 % poderem ser usadas na rede neuronal
 amountImageTypes = 10;
 
+folderPrefix = 'Datasets/original/';
+cacheFolderPrefix = ['Datasets/cached/res_' num2str(imgResolution) '/'];
+
+folderPath = [folderPrefix folderName];
+cacheFolderPath = [cacheFolderPrefix folderName];
+
+extensionLength = strlength(fileExtension) + 1;
 
 % Preparar a lista das imagens a abrir
-files = dir(imagesPath); % TODO fix da shit 2 primeiros elementos são saltados
-
+files = dir(folderPath);
 %Sort the files by their real order ---------------------------------------
 fileNames = strings(1,length(files));
 
 for i=1:length(files)
-    fileNames(i) =  files(i).name;
+    fileNames(i) = files(i).name;
 end
 
-amountImgs = length(files) - 2; % - 200;
+amountImgs = length(files) - 2;
 
 filesWithoutDots = strings(1,amountImgs);
 filenum = zeros(1,amountImgs);
@@ -24,25 +30,19 @@ for i=3:length(files)
     str = fileNames(i);
     
     filenum(i - 2) = sscanf(str, fileNumberFilter);
-    filesWithoutDots(i - 2) = str; 
+    numba = strlength(str) - extensionLength;
+    filesWithoutDots(i - 2) = extractBetween(str,1,numba);
 end
 
 [~,sortedIndexes] = sort(filenum);
-almostReadyPaths = filesWithoutDots(sortedIndexes);
+fileNames = filesWithoutDots(sortedIndexes);
 
-pathPrePart = strcat(imagesPath, '\');
-
-readyPaths = strings(1,amountImgs);
-
-for i=1:amountImgs
-    readyPaths(i) = strcat(pathPrePart, almostReadyPaths(i));
-end
+% pathPrePart = strcat(folderPath, '\');
 
 if(flag == 2)
-    readyPaths = fliplr(readyPaths);
+    fileNames = fliplr(fileNames);
     % garantir que a inversão está certa
 end
-
 % Sort End ----------------------------------------------------------------
 
 amountOfEachType = amountImgs / amountImageTypes;
@@ -52,15 +52,35 @@ imageTargets = zeros(amountImageTypes, amountImgs);
 
 counter = 0;
 
+if not(isfolder(cacheFolderPath))
+    mkdir(cacheFolderPath);
+end
+
 for i=1:amountImgs
     
-    image = imread(readyPaths(i));
-    image = imresize(image, [imgResolution imgResolution]);
+    fileName = strcat(fileNames(i),'.');
+    fileName = strcat(fileName,fileExtension);
+    
+    cachedFilePath = [cacheFolderPath '/' ];
+    cachedFilePath = strcat(cachedFilePath,fileName);
+    
+    if(isfile(cachedFilePath))
+        %Get the cached image
+        image = imread(cachedFilePath);
+    else
+        %Get the image ready and cache it
+        filePath = strcat(folderPath,'/');
+        filePath = strcat(filePath,fileName);
+        
+        image = imread(filePath);
+        image = imresize(image, [imgResolution imgResolution]);
+        
+        imwrite(image,cachedFilePath,'png');
+    end
     
     imageInputs(:,i) = image(:);
     supposedLetter = fix(counter / amountOfEachType) + 1;
     imageTargets(supposedLetter , i) = 1;
     
-    counter = counter + 1;
-    
+    counter = counter + 1; 
 end
