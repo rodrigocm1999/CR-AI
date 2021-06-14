@@ -1,6 +1,6 @@
 clear variables;
 
-imgsResolution = 12;
+imgsResolution = 12; % Tamanho ideal, pois tem o minimo de informação sem perda de "detalhes"
 [imageInputs,imageTargets] = readyImages('Folder1', imgsResolution, '%d','jpg');
 
 net = feedforwardnet([40]);
@@ -13,8 +13,8 @@ net.divideFcn = '';
 %net.trainFcn = 'trainrp';
 %net.trainFcn = 'traingdx';
 
-net.layers{1}.transferFcn = 'logsig';
-net.layers{2}.transferFcn = 'purelin';
+% net.layers{1}.transferFcn = 'logsig';
+% net.layers{2}.transferFcn = 'purelin';
 % net.layers{1}.transferFcn = 'tansig';
 % net.layers{2}.transferFcn = 'logsig';
 

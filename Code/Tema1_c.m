@@ -1,6 +1,6 @@
 clear variables;
 
-imgsResolution = 12;
+imgsResolution = 12; % Tamanho ideal, pois tem o minimo de informação sem perda de "detalhes"
 [imageInputs,imageTargets] = readyImages('Folder2', imgsResolution, 'letter_bnw_%d','jpg', 1);
 
 % TODO read networks from Tema1_b.m

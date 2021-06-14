@@ -1,6 +1,6 @@
 clear variables;
 
-imgsResolution = 12;
+imgsResolution = 12; % Tamanho ideal, pois tem o minimo de informação sem perda de "detalhes"
 [imageInputs,imageTargets] = readyImages('Folder2', imgsResolution, 'letter_bnw_%d','jpg', 1);
 
 layers = [10];
@@ -8,7 +8,7 @@ net = feedforwardnet(layers);
 
 % net.trainFcn = 'traingdx';
 
-net.divideFcn = 'divideint';
+net.divideFcn = 'divideblock';
 net.divideParam.trainRatio = 0.8;
 net.divideParam.testRatio = 0.1;
 net.divideParam.valRatio = 0.1;
@@ -60,6 +60,7 @@ if not(isfile(scoresFile))
 end
 % -------------------------------------------------------------------------
 
+% Save Results-------------------------------------------------------------
 fileId = num2str(now());
 
 results = {fileId, layers, ...
@@ -67,7 +68,6 @@ results = {fileId, layers, ...
     tr.num_epochs , perform(net,imageTargets,output) ,tr.trainFcn};
 writecell(results,scoresFile,'WriteMode','append','Delimiter',';');
 
-% Save --------------------------------------------------------------------
 networkFile = [networksFolder '/' fileId '.mat'];
 save(networkFile, 'net');
 
