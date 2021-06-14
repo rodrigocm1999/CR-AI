@@ -3,16 +3,16 @@ clear variables;
 imgsResolution = 12;
 [imageInputs,imageTargets] = readyImages('Folder2', imgsResolution, 'letter_bnw_%d','jpg', 1);
 
-layers = [5];
+layers = [10];
 net = feedforwardnet(layers);
 
 % net.trainFcn = 'traingdx';
-net.trainParam.epochs = 100;
 
 net.divideFcn = 'divideint';
-net.divideParam.trainRatio = 0.9;
+net.divideParam.trainRatio = 0.8;
 net.divideParam.testRatio = 0.1;
 net.divideParam.valRatio = 0.1;
+
 
 % Train -------------------------------------------------------------------
 [net,tr] = train(net, imageInputs, imageTargets);
@@ -72,7 +72,7 @@ networkFile = [networksFolder '/' fileId '.mat'];
 save(networkFile, 'net');
 
 trimmedTr.layers = layers;
-trimmedTr.gradient =  tr.gradient(tr.num_epochs);
+trimmedTr.gradient = tr.gradient(tr.num_epochs);
 trimmedTr.trainAccuracy = trainAccuracy;
 trimmedTr.validationAccuracy = validationAccuracy;
 trimmedTr.testAccuracy = testAccuracy;

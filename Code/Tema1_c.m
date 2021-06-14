@@ -1,6 +1,6 @@
 clear variables;
 
-imgsResolution = 24;
+imgsResolution = 12;
 [imageInputs,imageTargets] = readyImages('Folder2', imgsResolution, 'letter_bnw_%d','jpg', 1);
 
 % TODO read networks from Tema1_b.m

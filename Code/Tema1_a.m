@@ -1,9 +1,10 @@
 clear variables;
 
-imgsResolution = 18;
+imgsResolution = 12;
 [imageInputs,imageTargets] = readyImages('Folder1', imgsResolution, '%d','jpg');
 
-net = feedforwardnet([10]);
+net = feedforwardnet([40]);
+
 % Usar todas as imagens para treinar
 net.divideFcn = '';
 %Settings a alterar
@@ -12,10 +13,10 @@ net.divideFcn = '';
 %net.trainFcn = 'trainrp';
 %net.trainFcn = 'traingdx';
 
-% net.layers{1}.transferFcn = 'logsig';
-% net.layers{2}.transferFcn = 'purelin';
-net.layers{1}.transferFcn = 'tansig';
-net.layers{2}.transferFcn = 'logsig';
+net.layers{1}.transferFcn = 'logsig';
+net.layers{2}.transferFcn = 'purelin';
+% net.layers{1}.transferFcn = 'tansig';
+% net.layers{2}.transferFcn = 'logsig';
 
 
 net.trainParam.epochs = 100;
