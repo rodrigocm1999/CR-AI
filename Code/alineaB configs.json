@@ -1,0 +1,45 @@
+{
+  "trainParam.epochs": 100,
+  "configs": [
+    {
+      "layers": [
+        10
+      ],
+      "settings": {
+        "trainFcn": "traingd",
+        "divideFcn": "divideint",
+        "divideParam.trainRatio": 0.9,
+        "net.divideParam.testRatio": 0.1,
+        "net.divideParam.valRatio": 0.1
+      }
+    },
+    {
+      "layers": [
+        10
+      ],
+      "settings": {
+        "layers{1}.transferFcn": "logsig",
+        "layers{2}.transferFcn": "purelin",
+        "trainFcn": "traingd",
+        "divideFcn": "divideint",
+        "divideParam.trainRatio": 0.9,
+        "divideParam.testRatio": 0.1,
+        "divideParam.valRatio": 0.1
+      }
+    },
+    {
+      "layers": [
+        10
+      ],
+      "settings": {
+        "layers{1}.transferFcn": "tansig",
+        "layers{2}.transferFcn": "logsig",
+        "trainFcn": "traingd",
+        "divideFcn": "divideint",
+        "divideParam.trainRatio": 0.9,
+        "divideParam.testRatio": 0.1,
+        "divideParam.valRatio": 0.1
+      }
+    }
+  ]
+}

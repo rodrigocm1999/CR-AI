@@ -1,8 +1,12 @@
-function [imageInputs,imageTargets] = readyImages(folderName,imgResolution,fileNumberFilter,fileExtension, flag)
+function [imageInputs,imageTargets] = readyImages(folderName,imgResolution,fileNumberFilter,fileExtension, reverse)
 %READYIMAGES
 % Esta função pega nas imagens de treino e converte para matrizes para
 % poderem ser usadas na rede neuronal
 amountImageTypes = 10;
+
+if ~exist('reverse','var')
+    reverse = 0;
+end
 
 folderPrefix = 'Datasets/original/';
 cacheFolderPrefix = ['Datasets/cached/res_' num2str(imgResolution) '/'];
@@ -39,7 +43,7 @@ fileNames = filesWithoutDots(sortedIndexes);
 
 % pathPrePart = strcat(folderPath, '\');
 
-if(flag == 2)
+if(reverse == 1)
     fileNames = fliplr(fileNames);
     % garantir que a inversão está certa
 end
@@ -59,10 +63,11 @@ end
 for i=1:amountImgs
     
     fileName = strcat(fileNames(i),'.');
-    fileName = strcat(fileName,fileExtension);
+    fileNameJPG = strcat(fileName,fileExtension);
     
     cachedFilePath = [cacheFolderPath '/' ];
     cachedFilePath = strcat(cachedFilePath,fileName);
+    cachedFilePath = strcat(cachedFilePath,'png');
     
     if(isfile(cachedFilePath))
         %Get the cached image
@@ -70,17 +75,17 @@ for i=1:amountImgs
     else
         %Get the image ready and cache it
         filePath = strcat(folderPath,'/');
-        filePath = strcat(filePath,fileName);
+        filePath = strcat(filePath,fileNameJPG);
         
         image = imread(filePath);
         image = imresize(image, [imgResolution imgResolution]);
         
-        imwrite(image,cachedFilePath,'png');
+        imwrite(image,cachedFilePath);
     end
     
     imageInputs(:,i) = image(:);
-    supposedLetter = fix(counter / amountOfEachType) + 1;
+    supposedLetter = floor(counter / amountOfEachType) + 1;
     imageTargets(supposedLetter , i) = 1;
     
-    counter = counter + 1; 
+    counter = counter + 1;
 end
