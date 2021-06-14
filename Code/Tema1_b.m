@@ -1,4 +1,4 @@
-clear;
+clear variables;
 
 imgsResolution = 12;
 [imageInputs,imageTargets] = readyImages('Folder2', imgsResolution, 'letter_bnw_%d','jpg', 1);
@@ -16,7 +16,6 @@ net.divideParam.valRatio = 0.1;
 
 % Train -------------------------------------------------------------------
 [net,tr] = train(net, imageInputs, imageTargets);
-disp(tr)
 % Simulate ----------------------------------------------------------------
 output = sim(net, imageInputs);
 % -------------------------------------------------------------------------
@@ -72,7 +71,7 @@ writecell(results,scoresFile,'WriteMode','append','Delimiter',';');
 networkFile = [networksFolder '/' fileId '.mat'];
 save(networkFile, 'net');
 
-trimmedTr.layers 
+trimmedTr.layers = layers;
 trimmedTr.gradient =  tr.gradient(tr.num_epochs);
 trimmedTr.trainAccuracy = trainAccuracy;
 trimmedTr.validationAccuracy = validationAccuracy;

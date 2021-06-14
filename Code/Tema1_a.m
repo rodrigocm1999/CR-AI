@@ -1,4 +1,4 @@
-clear all;
+clear variables;
 
 imgsResolution = 18;
 [imageInputs,imageTargets] = readyImages('Folder1', imgsResolution, '%d','jpg');

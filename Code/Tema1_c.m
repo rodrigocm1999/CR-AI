@@ -1,4 +1,4 @@
-clear all;
+clear variables;
 
 imgsResolution = 24;
 [imageInputs,imageTargets] = readyImages('Folder2', imgsResolution, 'letter_bnw_%d','jpg', 1);
