@@ -14,8 +14,8 @@ end
 % Create and put header if results file doesn't exist -----------------------------
 scoresFile = [savesFolder '/networksScores.csv'];
 if not(isfile(scoresFile))
-    fields = {'FileId','Layers','TrainAccuracy','ValidationAccuracy','TestAccuracy','Folder3Accuracy','Iterations','Performance','TrainFunction','TrainTime'};
-    writecell(fields,scoresFile,'Delimiter',';');
+    fields = {'FileId','Layers','TrainAccuracy','ValidationAccuracy','TestAccuracy','Folder3Accuracy','Iterations','Performance','TrainFunction','TrainTime','HiddenLayer','OuputLayer'};
+    writecell(fields,scoresFile,'Delimiter',',');
 end
 % -------------------------------------------------------------------------
 
@@ -28,8 +28,9 @@ imgsResolution = 12; % Tamanho ideal, pois tem o minimo de informação sem perd
 layersConfigs = [{10},{20}];
 activationFncConfigs = [
     {[{'logsig'} {'purelin'}]},...
-    {[{'purelin'} {'purelin'}]},...
-    {[{'tansig'} {'purelin'}]}];
+    {[{'tansig'} {'purelin'}]},...
+    {[{'tansig'} {'tansig'}]},...
+    {[{'logsig'} {'logsig'}]}];
 trainFcnConfigs = [{'trainlm'},{'trainrp'},{'traincgp'}];
 divideFcnConfigs = [{'divideint'},{'dividerand'}];
 divideParamsConfigs = [{[0.7 0.15 0.15]},{[0.8 0.1 0.1]}]; % train val test
@@ -95,7 +96,8 @@ for divParamI=1:numel(divideParamsConfigs)
                     fprintf('Precisao total Folder3 -> %f\n', folder3Accuracy)
                     % -------------------------------------------------------------------------
                     
-                    fileId = num2str(now());
+                    %fileId = num2str(now());
+                    fileId = num2str(counter);
                     
                     if trainAccuracy < 100 && testAccuracy >= 80
                         fprintf('Accuracy de treino não chegou aos 100 perc. Considerar remover dos testes\n')
@@ -109,8 +111,10 @@ for divParamI=1:numel(divideParamsConfigs)
                     results = {fileId, layers, ...
                         trainAccuracy ,validationAccuracy ,testAccuracy,...
                         folder3Accuracy, tr.num_epochs, perform(net,imageTargets,output),...
-                        tr.trainFcn, elapsedTime};
-                    writecell(results,scoresFile,'WriteMode','append','Delimiter',';');
+                        tr.trainFcn, elapsedTime,net.layers{1}.transferFcn,net.layers{2}.transferFcn};
+                    
+                        
+                    writecell(results,scoresFile,'WriteMode','append','Delimiter',',');
                     
                     trimmedTr.layers = layers;
                     trimmedTr.gradient = tr.gradient(tr.num_epochs);
