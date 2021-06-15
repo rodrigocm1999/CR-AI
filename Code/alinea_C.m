@@ -1,5 +1,5 @@
-networkFolder = 'savedNetworks/networks/';
-networkId = '738322.5674';
+networkFolder = 'redes guardadas/networks/';
+networkId = '13';
 load([networkFolder networkId '.mat']);
 
 % Load Images -------------------------------------------------------------
@@ -9,10 +9,12 @@ imgsResolution = 12; % Tamanho ideal, pois tem o minimo de informação sem perd
 [folder3Inputs,folder3Targets] = readyImages('Folder3', imgsResolution, 'letter_bnw_test_%d','jpg');
 % -------------------------------------------------------------------------
 
-% Check folder 3 correctness ----------------------------------------------
+% -------------------------------------------------------------------------
+fprintf('Verificar precisão na Folder3 com a rede -> %s\n',networkId)
 folder3Output = sim(net, folder3Inputs);
-folder3Accuracy = testNetworkAccuracy(folder3Output,folder3Targets);
-fprintf('Verificar precisão com a Folder3\nPrecisao Folder3 -> %f\n', folder3Accuracy)
+folder3OutputAccuracy = testNetworkAccuracy(folder3Output,folder3Targets);
+fprintf('Precisao Folder3 -> %f\n', folder3OutputAccuracy)
+% -------------------------------------------------------------------------
 
 
 
@@ -26,15 +28,12 @@ fprintf('TrainStop: %s\n',tr.stop)
 
 % Simulate each Folder ----------------------------------------------------
 fprintf('\nSimular com cada pasta\n')
-
 folder1Output = sim(net, folder1Inputs);
 folder1OutputAccuracy = testNetworkAccuracy(folder1Output,folder1Targets);
 fprintf('Precisao Folder1 -> %f\n', folder1OutputAccuracy)
-
 folder2Output = sim(net, folder2Inputs);
 folder2OutputAccuracy = testNetworkAccuracy(folder2Output,folder2Targets);
 fprintf('Precisao Folder2 -> %f\n', folder2OutputAccuracy)
-
 folder3Output = sim(net, folder3Inputs);
 folder3OutputAccuracy = testNetworkAccuracy(folder3Output,folder3Targets);
 fprintf('Precisao Folder3 -> %f\n', folder3OutputAccuracy)

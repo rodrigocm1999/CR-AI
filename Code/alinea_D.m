@@ -1,5 +1,5 @@
-networkFolder = 'savedNetworks/networks/';
-networkId = '738322.5674';
+networkFolder = 'redes guardadas/networks/';
+networkId = '13';
 load([networkFolder networkId '.mat']);
 
 imgResolution = 12;
