@@ -14,7 +14,7 @@ end
 % Create and put header if results file doesn't exist -----------------------------
 scoresFile = [savesFolder '/networksScores.csv'];
 if not(isfile(scoresFile))
-    fields = {'FileId','Layers','TrainAccuracy','ValidationAccuracy','TestAccuracy','Folder3Accuracy','Iterations','Performance','TrainFunction'};
+    fields = {'FileId','Layers','TrainAccuracy','ValidationAccuracy','TestAccuracy','Folder3Accuracy','Iterations','Performance','TrainFunction','TrainTime'};
     writecell(fields,scoresFile,'Delimiter',';');
 end
 % -------------------------------------------------------------------------
@@ -29,21 +29,20 @@ layersConfigs = [{10},{20}];
 activationFncConfigs = [
     {[{'logsig'} {'purelin'}]},...
     {[{'purelin'} {'purelin'}]},...
-    {[{'tansig'} {'purelin'}]},...
-    ];
+    {[{'tansig'} {'purelin'}]}];
 trainFcnConfigs = [{'trainlm'},{'trainrp'},{'traincgp'}];
 divideFcnConfigs = [{'divideint'},{'dividerand'}];
-divideParamsConfigs = [{[0.8 0.1 0.1]},{[1 0 0]}];
+divideParamsConfigs = [{[0.7 0.15 0.15]},{[0.8 0.1 0.1]}]; % train val test
 
-totalRuns = numel(divideParamsConfigs)*numel(layersConfigs)* ...
-    numel(trainFcnConfigs)*numel(activationFncConfigs)*numel(divideFcnConfigs);
+totalRuns = numel(divideParamsConfigs) * numel(layersConfigs) * ...
+    numel(trainFcnConfigs) * numel(activationFncConfigs) * numel(divideFcnConfigs);
 counter = 0;
 
 for divParamI=1:numel(divideParamsConfigs)
     for layI=1:numel(layersConfigs)
-        for traFcnI=1:numel(trainFcnConfigs)
-            for divFcnI=1:numel(divideFcnConfigs)
-                for actFcnI=1:numel(activationFncConfigs)
+        for divFcnI=1:numel(divideFcnConfigs)
+            for actFcnI=1:numel(activationFncConfigs)
+                for traFcnI=1:numel(trainFcnConfigs)
                     counter = counter + 1;
                     fprintf('\nRuns -> %d(%d)\n', counter,totalRuns)
                     
@@ -57,8 +56,8 @@ for divParamI=1:numel(divideParamsConfigs)
                     net.divideFcn = divideFcnConfigs{divFcnI};
                     ratios = divideParamsConfigs{divParamI};
                     net.divideParam.trainRatio = ratios(1);
-                    net.divideParam.testRatio = ratios(2);
-                    net.divideParam.valRatio = ratios(3);
+                    net.divideParam.valRatio = ratios(2);
+                    net.divideParam.testRatio = ratios(3);
                     
                     net.trainParam.epochs = 200;
                     
@@ -69,7 +68,8 @@ for divParamI=1:numel(divideParamsConfigs)
                     % Train -------------------------------------------------------------------
                     [net,tr] = train(net, imageInputs, imageTargets);
                     elapsedTime = toc(startTime);
-                    fprintf('Tempo: %.2f s\n',elapsedTime)
+                    fprintf('Tempo: %.2f s\tIterações: %d\n',elapsedTime,tr.num_epochs)
+                    % disp(tr)
                     
                     if(strcmp(tr.stop, 'User cancel.'))
                         return
@@ -103,8 +103,9 @@ for divParamI=1:numel(divideParamsConfigs)
                     fileId = num2str(now());
                     
                     results = {fileId, layers, ...
-                        trainAccuracy ,validationAccuracy ,testAccuracy ,folder3Accuracy,...
-                        tr.num_epochs , perform(net,imageTargets,output) ,tr.trainFcn};
+                        trainAccuracy ,validationAccuracy ,testAccuracy,...
+                        folder3Accuracy, tr.num_epochs, perform(net,imageTargets,output),...
+                        tr.trainFcn, elapsedTime};
                     writecell(results,scoresFile,'WriteMode','append','Delimiter',';');
                     
                     networkFile = [networksFolder '/' fileId '.mat'];
@@ -115,6 +116,7 @@ for divParamI=1:numel(divideParamsConfigs)
                     trimmedTr.trainAccuracy = trainAccuracy;
                     trimmedTr.validationAccuracy = validationAccuracy;
                     trimmedTr.testAccuracy = testAccuracy;
+                    trimmedTr.trainTime = elapsedTime;
                     
                     importantFieldsTr = {'trainFcn','trainParam','performFcn','divideFcn',...
                         'divideParam','valInd','testInd','stop','num_epochs','best_epoch',...
@@ -130,7 +132,6 @@ for divParamI=1:numel(divideParamsConfigs)
                     fid = fopen(trainResultFile,'w');
                     fprintf(fid,'%s\n',trJson(:));
                     fclose(fid);
-                    
                 end
             end
         end

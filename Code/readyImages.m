@@ -83,6 +83,7 @@ for i=1:amountImgs
         imwrite(image,cachedFilePath);
     end
     
+    image = double(image)/255;
     imageInputs(:,i) = image(:);
     supposedLetter = floor(counter / amountOfEachType) + 1;
     imageTargets(supposedLetter , i) = 1;
