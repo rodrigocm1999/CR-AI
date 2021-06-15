@@ -95,21 +95,22 @@ for divParamI=1:numel(divideParamsConfigs)
                     fprintf('Precisao total Folder3 -> %f\n', folder3Accuracy)
                     % -------------------------------------------------------------------------
                     
-                    if trainAccuracy ~= 100
+                    fileId = num2str(now());
+                    
+                    if trainAccuracy < 100 && testAccuracy >= 80
                         fprintf('Accuracy de treino não chegou aos 100 perc. Considerar remover dos testes\n')
+                    else
+                        networkFile = [networksFolder '/' fileId '.mat'];
+                        save(networkFile, 'net', 'imgsResolution');
                     end
                     
                     % Save Results-------------------------------------------------------------
-                    fileId = num2str(now());
                     
                     results = {fileId, layers, ...
                         trainAccuracy ,validationAccuracy ,testAccuracy,...
                         folder3Accuracy, tr.num_epochs, perform(net,imageTargets,output),...
                         tr.trainFcn, elapsedTime};
                     writecell(results,scoresFile,'WriteMode','append','Delimiter',';');
-                    
-                    networkFile = [networksFolder '/' fileId '.mat'];
-                    save(networkFile, 'net');
                     
                     trimmedTr.layers = layers;
                     trimmedTr.gradient = tr.gradient(tr.num_epochs);

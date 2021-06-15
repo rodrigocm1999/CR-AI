@@ -79,7 +79,9 @@ for i=1:amountImgs
         
         image = imread(filePath);
         image = imresize(image, [imgResolution imgResolution]);
-        
+        if size(image,3) > 1
+            image = rgb2gray(image);
+        end
         imwrite(image,cachedFilePath);
     end
     
