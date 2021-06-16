@@ -1,4 +1,4 @@
-function [imageInputs,imageTargets] = readyImages(folderName,imgResolution,fileNumberFilter,fileExtension, reverse)
+function [imageInputs,imageTargets] = readyImages(folderName,imgResolution,fileNumberFilter,fileExtension, reverse, isFullPath)
 %READYIMAGES
 % Esta função pega nas imagens de treino e converte para matrizes para
 % poderem ser usadas na rede neuronal
@@ -7,12 +7,21 @@ amountImageTypes = 10;
 if ~exist('reverse','var')
     reverse = 0;
 end
+if ~exist('isFullPath','var')
+    isFullPath = 0;
+end
 
-folderPrefix = 'Datasets/original/';
+if ~isFullPath
+    folderPrefix = 'Datasets/original/';
+    folderPath = [folderPrefix folderName];
+else
+   folderPath = folderName;
+   splitPath = split(folderName,"\");
+   folderName = splitPath{end};
+end
+
 cacheFolderPrefix = ['Datasets/cached/res_' num2str(imgResolution) '/'];
-
-folderPath = [folderPrefix folderName];
-cacheFolderPath = [cacheFolderPrefix folderName];
+cacheFolderPath = strcat(cacheFolderPrefix, folderName);
 
 extensionLength = strlength(fileExtension) + 1;
 
@@ -33,7 +42,9 @@ filenum = zeros(1,amountImgs);
 for i=3:length(files)
     str = fileNames(i);
     
-    filenum(i - 2) = sscanf(str, fileNumberFilter);
+    temp = regexp(str,'\d*','Match');
+%     temp = sscanf(str, fileNumberFilter);
+    filenum(i - 2) = temp;
     numba = strlength(str) - extensionLength;
     filesWithoutDots(i - 2) = extractBetween(str,1,numba);
 end
